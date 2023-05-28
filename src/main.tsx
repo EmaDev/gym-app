@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import {
-  createBrowserRouter,
+  createHashRouter,
   RouterProvider,
 } from "react-router-dom";
 import './index.css'
@@ -11,18 +11,18 @@ import ErrorPage from './routes/ErrorPage';
 import TuRutina from './routes/TuRutina';
 import { CrearEjercicio } from './routes/CrearEjercicio';
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: "/",
     element: <App/>,
     errorElement: <ErrorPage />,
   },
   {
-    path: "tu-rutina",
+    path: "/tu-rutina",
     element: <TuRutina/>,
   },
   {
-    path: "crear-ejercicio",
+    path: "/crear-ejercicio",
     element: <CrearEjercicio/>,
   },
   
