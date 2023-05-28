@@ -36,7 +36,7 @@ export const EjercicioItem = ({ data}: Props) => {
 
     useEffect( () => {
         const getData = async() => {
-            const resp = await getEjercioDeHoy("emanuel123", data.id || "");
+            const resp = await getEjercioDeHoy(data.id || "");
             if(resp.ok){
                 setEjerCompletado(true);
             }

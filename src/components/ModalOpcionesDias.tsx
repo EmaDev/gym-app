@@ -47,16 +47,15 @@ const Item = styled.button`
 interface Props {
     activo: boolean;
     ejerId:string;
-    uid:string;
     ocultar: () => void;
     seleccionarHistorico: (data:Date) => void;
 }
-export const ModalOpcionesDias = ({ activo, uid, ejerId, ocultar, seleccionarHistorico }: Props) => {
+export const ModalOpcionesDias = ({ activo, ejerId, ocultar, seleccionarHistorico }: Props) => {
     const [historial, setHistorial] = useState<EjercioUsuarioInterface[]>([]);
 
     useEffect(() => {
         const getData = async () => {
-            const {data} = await getEjerciosDeUnUsuario(uid, ejerId);
+            const {data} = await getEjerciosDeUnUsuario(ejerId);
             setHistorial(data);
         }
         if (activo) {

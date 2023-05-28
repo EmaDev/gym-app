@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { EjercioUsuarioInterface, ResultadosSerieInterface } from '../interfaces/Ejercicio';
+import {ResultadosSerieInterface} from '../interfaces/Ejercicio';
 import { styled } from 'styled-components';
 import { EjercicioContext } from '../context/EjercicioActivoContext';
 import { buscarUsuarioEnStorage, formatDate } from '../helpers';
@@ -296,7 +296,6 @@ export const ModalEjercicio = ({ }: Props) => {
             <ModalOpcionesDias
                 activo={mostrarHistorial}
                 ejerId={ejercicio.id || ""}
-                uid={"emanuel123"} //TODO: autenticacion
                 ocultar={() => setMostrarHistorial(false)}
                 seleccionarHistorico={seleccionarHistorico}
             />

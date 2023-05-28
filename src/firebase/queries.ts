@@ -1,4 +1,4 @@
-import { Timestamp, addDoc, collection, doc, getDocs, getFirestore, query, setDoc, where } from "firebase/firestore";
+import { Timestamp, addDoc, collection, getDocs, getFirestore, query, where } from "firebase/firestore";
 import { app } from "./config";
 import { EjercicioInterface, EjercioUsuarioInterface } from "../interfaces/Ejercicio";
 import { Usuario } from "../interfaces/Usuario";
@@ -56,7 +56,7 @@ export const getEjerciciosPorUsuario = async (dia: number) => {
         const querySnapshot = await getDocs(q);
         const ejerciosDelDia: EjercicioInterface[] = [];
         querySnapshot.forEach((doc) => {
-            const ejer: EjercicioInterface = doc.data();
+            const ejer:EjercicioInterface = doc.data() as EjercicioInterface;
             if (ejer.dias.find(d => d.codigo == dia && d.activo == true)) {
                 ejerciosDelDia.push({
                     ...ejer,
@@ -94,7 +94,7 @@ export const guardarEjercicioDeUsuario = async (data: EjercioUsuarioInterface) =
     }
 }
 
-export const getEjerciosDeUnUsuario = async (uid: string, ejercioId: string) => {
+export const getEjerciosDeUnUsuario = async (ejercioId: string) => {
     try {
         const {usuario} = buscarUsuarioEnStorage();
         const q = query(collection(db, "ejercicio_usuario"),
@@ -164,7 +164,7 @@ export const getEjercioDeUnUsuarioPorDia = async (ejercioId: string, dia:Date) =
     }
 }
 
-export const getEjercioDeHoy = async (uid: string, ejercioId: string) => {
+export const getEjercioDeHoy = async (ejercioId: string) => {
     try {
         const {usuario} = buscarUsuarioEnStorage();
         const momento = new Date();

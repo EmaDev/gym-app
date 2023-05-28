@@ -10,7 +10,6 @@ import App from './App';
 import ErrorPage from './routes/ErrorPage';
 import TuRutina from './routes/TuRutina';
 import { CrearEjercicio } from './routes/CrearEjercicio';
-import { SeleccionUsuario } from './routes/SeleccionUsuario';
 
 const router = createBrowserRouter([
   {

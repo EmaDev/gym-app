@@ -93,7 +93,7 @@ export const NuevoEjercicio = () => {
             </Input>
             <Label>Dias de actividad</Label>
             <div style={{ display: "grid", gridTemplateColumns: "25% 25% 25% 25%" }}>
-                {diasSemanaActivos.map((dia, i) => (
+                {diasSemanaActivos.map((dia) => (
                     <BotonActivable activo={dia.activo} key={dia.nombre} onClick={() => seleccionarDia(dia.nombre)}>{dia.nombre}</BotonActivable>
                 ))}
             </div>

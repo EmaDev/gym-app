@@ -62,7 +62,7 @@ export const TablaHistorial = ({historico, ejerId}: Props) => {
     })
   }
 
-  if (!data) {
+  if (!data || isLoading) {
     return (
       <p style={{margin: "2rem auto", textAlign: "center"}}>Cargando...</p>
     )
