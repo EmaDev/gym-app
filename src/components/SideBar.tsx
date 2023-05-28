@@ -5,6 +5,7 @@ import { CgMenu } from 'react-icons/cg';
 import userImg from "../assets/user.png";
 import { buscarUsuarioEnStorage } from '../helpers';
 import { Usuario } from '../interfaces/Usuario';
+import { Link } from 'react-router-dom';
 
 const Seccion = styled.section`
    .ocultar{
@@ -86,13 +87,13 @@ export const SideBar = () => {
             <Background ref={bgRef} onClick={ocultarMostarNav} className='ocultarBg' />
             <Nav ref={navRef} className='ocultar'>
                 <Li>
-                    <a href={`/`}>Inicio</a>
+                    <Link to={"/"}>Inicio</Link>
                 </Li>
                 <Li>
-                    <a href={`/configuracion`}>Configuracion</a>
+                    <Link to={"/configuracion"}>Configuracion</Link>
                 </Li>
                 <Li>
-                    <a href={`/crear-ejercicio`}>Crear ejercicio</a>
+                    <Link to={`/crear-ejercicio`}>Crear ejercicio</Link>
                 </Li>
                 <Li>
                     <a onClick={navegarACambiarUsuario}>Cambiar de usuario</a>
