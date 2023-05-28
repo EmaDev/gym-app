@@ -5,7 +5,6 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import './index.css'
-import { SideBar } from './components/SideBar';
 import App from './App';
 import ErrorPage from './routes/ErrorPage';
 import TuRutina from './routes/TuRutina';
@@ -25,13 +24,15 @@ const router = createHashRouter([
     path: "/crear-ejercicio",
     element: <CrearEjercicio/>,
   },
-  
+  {
+    path: "/cambiar-usuario",
+    element: <App/>,
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   
   <React.StrictMode>
-    <SideBar/>
     <RouterProvider router={router} />
   </React.StrictMode>,
 )

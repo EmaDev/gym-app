@@ -5,7 +5,7 @@ import { CgMenu } from 'react-icons/cg';
 import userImg from "../assets/user.png";
 import { buscarUsuarioEnStorage } from '../helpers';
 import { Usuario } from '../interfaces/Usuario';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 const Seccion = styled.section`
    .ocultar{
@@ -64,7 +64,7 @@ export const SideBar = () => {
         if(ok){
             setUsuarioActivo(usuario);
         }
-    },[location.reload]);
+    },[location.href]);
     const navRef: any = useRef(null);
     const bgRef: any = useRef(null);
 
@@ -80,20 +80,19 @@ export const SideBar = () => {
 
     const navegarACambiarUsuario = () => {
         localStorage.removeItem('usuario-activo');
-        location.href = "/";
     }
     return (
         <Seccion >
             <Background ref={bgRef} onClick={ocultarMostarNav} className='ocultarBg' />
             <Nav ref={navRef} className='ocultar'>
                 <Li>
-                    <Link to={"/"}>Inicio</Link>
+                    <a href={`/`}>Inicio</a>
                 </Li>
                 <Li>
-                    <Link to={"/configuracion"}>Configuracion</Link>
+                    <a href={`/configuracion`}>Configuracion</a>
                 </Li>
                 <Li>
-                    <Link to={`/crear-ejercicio`}>Crear ejercicio</Link>
+                    <NavLink to={`/crear-ejercicio`}>Crear ejercicio</NavLink>
                 </Li>
                 <Li>
                     <a onClick={navegarACambiarUsuario}>Cambiar de usuario</a>
