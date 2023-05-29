@@ -20,13 +20,13 @@ export const Input = styled.div`
 `;
 
 export const BotonActivable = styled.button<any>`
-  padding:.5rem;
+  padding:.8rem .5rem;
   font-size: 1.6rem;
   color: #fff;
   margin: .3rem;
   border-radius: 5px;
   font-size: 1rem;
-  background: ${ ({activo}) => activo ? "#ffe1f1" : "#b1b1b1"};
+  background: ${ ({activo}) => activo ? "pink" : "#b1b1b1"};
   border-style:none;
   box-shadow: 2px 2px 2px #e1e1e1; 
   border: 1px solid #e1e1e1;

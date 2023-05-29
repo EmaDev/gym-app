@@ -6,6 +6,7 @@ import userImg from "../assets/user.png";
 import { buscarUsuarioEnStorage } from '../helpers';
 import { Usuario } from '../interfaces/Usuario';
 import { NavLink } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const Seccion = styled.section`
    .ocultar{
@@ -50,15 +51,15 @@ const DivFlex = styled.div`
 const Li = styled.li`
   padding: 1rem;
   border-bottom: 1px solid rgba(0,0,0,0.3);
-  a{
+  a, p{
     color: #fff;
     font-weight: 700;
+    margin:0;
   }
 `;
 export const SideBar = () => {
 
     const [usuarioActivo, setUsuarioActivo] = useState<Usuario>({} as Usuario);
-
     useEffect( () => {
         const {ok, usuario} = buscarUsuarioEnStorage();
         if(ok){
@@ -80,27 +81,38 @@ export const SideBar = () => {
 
     const navegarACambiarUsuario = () => {
         localStorage.removeItem('usuario-activo');
+        location.reload();
+    }
+
+    const mostrarDatosUsuario = () => {
+        return Swal.fire({
+            title: usuarioActivo.nombre,
+            imageUrl: usuarioActivo.img || userImg,
+            imageWidth: 200,
+            imageHeight: 200,
+            imageAlt: 'Custom image',
+          })
     }
     return (
         <Seccion >
             <Background ref={bgRef} onClick={ocultarMostarNav} className='ocultarBg' />
             <Nav ref={navRef} className='ocultar'>
                 <Li>
-                    <a href={`/`}>Inicio</a>
+                    <NavLink to={`/`}>Inicio</NavLink>
                 </Li>
                 <Li>
-                    <a href={`/configuracion`}>Configuracion</a>
+                    <NavLink to={`/configuracion`}>Configuracion</NavLink>
                 </Li>
                 <Li>
-                    <NavLink to={`/crear-ejercicio`}>Crear ejercicio</NavLink>
+                    <NavLink to={`/crear-ejercicio/0`}>Crear ejercicio</NavLink>
                 </Li>
                 <Li>
-                    <a onClick={navegarACambiarUsuario}>Cambiar de usuario</a>
+                    <p onClick={navegarACambiarUsuario}>Cambiar de usuario</p>
                 </Li>
             </Nav>
             <DivFlex>
                 <CgMenu size={"2.8rem"} onClick={ocultarMostarNav} />
-                <img src={ usuarioActivo.img || userImg} />
+                <img src={ usuarioActivo.img || userImg} onClick={mostrarDatosUsuario}/>
             </DivFlex>
         </Seccion>
     )

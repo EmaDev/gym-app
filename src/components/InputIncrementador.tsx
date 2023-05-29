@@ -3,7 +3,7 @@ import { HiPlusSm, HiMinusSm } from "react-icons/hi";
 
 const Contenedor = styled.div`
   padding: .2rem;
-  background: #fbd0e7;
+  background: #edb4be;
   display: inline-block;
   border-radius: 4px;
   box-shadow: 2px 2px 2px #e1e1e1;
@@ -18,7 +18,7 @@ const Contenedor = styled.div`
 const Boton = styled.button`
    font-size: 1.8rem;
    padding: .2rem 1rem; 
-   background: #ffe1f1;
+   background: pink;
    border-style:none;
    border-radius: 4px;
    display:flex;

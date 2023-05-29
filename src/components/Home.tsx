@@ -9,6 +9,7 @@ import { EjercicioInterface } from '../interfaces/Ejercicio';
 import Swal from 'sweetalert2';
 import { buscarUsuarioEnStorage, formatDate } from '../helpers';
 import { Usuario } from '../interfaces/Usuario';
+import { NavLink } from 'react-router-dom';
 
 const DivFlex = styled.div`
     display:flex;
@@ -70,7 +71,7 @@ export const Home = () => {
             </Header>
             <DivFlex style={{borderBottom: "3px solid pink"}}>
                 <Titulo>Tu entrenamiento</Titulo>
-                <a href='/tu-rutina'><BsArrowRight size={"2.2rem"} color={"black"} style={{ margin: "0 1rem" }}/></a>
+                <NavLink to='/tu-rutina'><BsArrowRight size={"2.2rem"} color={"black"} style={{ margin: "0 1rem" }}/></NavLink>
             </DivFlex>
             <EjercicioContextProvider>
                 <ModalEjercicio />

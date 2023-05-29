@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { styled } from 'styled-components';
 import { BotonActivable, Button, DivOpcionIncrementable, DivSerie, Input, Label, Select } from './ejercicio.component';
 import { DiaSemanaInterface, DiaSemanalType, SEMANA_INICIAL } from '../interfaces/Semana';
@@ -7,19 +7,43 @@ import { TI_INICIAL } from '../interfaces/TecnicaIntensidad';
 import { useForm } from '../hooks/useForm';
 import { SerieInterface } from '../interfaces/Serie';
 import { EjercicioInterface } from '../interfaces/Ejercicio';
-import { crearNuevoEjercicio } from '../firebase/queries';
+import { crearNuevoEjercicio, editarEjercicioDeUsuario, getEjercicoPorId } from '../firebase/queries';
 import Swal from 'sweetalert2';
 import { buscarUsuarioEnStorage } from '../helpers';
+import { useNavigate } from 'react-router-dom';
 
 const Modal = styled.div`
   margin: 0;
   width:100%;
 `;
-export const NuevoEjercicio = () => {
-    const [diasSemanaActivos, setDiasSemanaActivos] = useState<DiaSemanaInterface[]>(SEMANA_INICIAL);
-    const { form, onChangeFormNumber, onChangeValue } = useForm({ nombre: "", descripcion: "", rpe: "", rir: "", series: 1 });
-    const [seriesState, setSeriesState] = useState<SerieInterface[]>([{ orden: 0, repeticiones: 1, tecnica: "NINGUNA" }]);
 
+interface Props {
+    ejerId: string;
+    edita: boolean;
+}
+export const NuevoEjercicio = ({ ejerId, edita }: Props) => {
+    const [diasSemanaActivos, setDiasSemanaActivos] = useState<DiaSemanaInterface[]>(SEMANA_INICIAL);
+    const { form, onChangeFormNumber, onChangeValue, llenarForm } = useForm({ nombre: "", descripcion: "", rpe: "", rir: "", series: 1 });
+    const [seriesState, setSeriesState] = useState<SerieInterface[]>([{ orden: 0, repeticiones: 1, tecnica: "NINGUNA" }]);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const getEjer = async () => {
+            const { ok, data } = await getEjercicoPorId(ejerId);
+            if (ok) {
+                llenarForm({
+                    nombre: data?.nombre,
+                    descripcion: data?.descripcion,
+                    rpe: "",
+                    rir: "",
+                    series: data?.cantidadSeries
+                });
+                setDiasSemanaActivos(data?.dias || SEMANA_INICIAL)
+            }
+            setSeriesState(data?.series || [{ orden: 0, repeticiones: 1, tecnica: "NINGUNA" }]);
+        }
+        getEjer();
+    }, [ejerId])
     const cambiarValorNumericoInput = (nombre: string, sumar: boolean) => {
         onChangeFormNumber(sumar, nombre);
     }
@@ -31,21 +55,21 @@ export const NuevoEjercicio = () => {
     }
 
 
-    const editarSerie = ({target}: any, serieId:number) => {
+    const editarSerie = ({ target }: any, serieId: number) => {
         const series = [...seriesState];
-        if(series[serieId]){
-            if(target.name == "reps"){
+        if (series[serieId]) {
+            if (target.name == "reps") {
                 series[serieId] = {
                     ...series[serieId],
                     repeticiones: target.value
                 }
-            }else if(target.name == "tecnica"){
+            } else if (target.name == "tecnica") {
                 series[serieId] = {
                     ...series[serieId],
                     tecnica: target.value
                 }
             }
-        }else{
+        } else {
             series.push({
                 orden: serieId,
                 repeticiones: (target.name == "reps") ? target.value : 1,
@@ -57,11 +81,15 @@ export const NuevoEjercicio = () => {
     }
 
     const validarFormulario = () => {
-        guadarEjercicio();
+        if (edita) {
+            editarEjercicio();
+        } else {
+            guadarEjercicio();
+        }
     }
 
-    const guadarEjercicio = async() => {
-        const {usuario} = buscarUsuarioEnStorage();
+    const guadarEjercicio = async () => {
+        const { usuario } = buscarUsuarioEnStorage();
         const ejercicio: EjercicioInterface = {
             nombre: form.nombre,
             dias: diasSemanaActivos,
@@ -71,8 +99,27 @@ export const NuevoEjercicio = () => {
             cantidadSeries: form.series,
             series: seriesState.slice(0, form.series)
         }
-        const {ok, msg} = await crearNuevoEjercicio(ejercicio);
-        if(ok){
+        const { ok, msg } = await crearNuevoEjercicio(ejercicio);
+        if (ok) {
+            return Swal.fire({
+                icon: ok ? "success" : "error",
+                title: msg
+            })
+        }
+    }
+    const editarEjercicio = async () => {
+        const { usuario } = buscarUsuarioEnStorage();
+        const ejercicio: EjercicioInterface = {
+            nombre: form.nombre,
+            dias: diasSemanaActivos,
+            creadoPor: usuario.uid,
+            descripcion: form.descripcion,
+            publico: true,
+            cantidadSeries: form.series,
+            series: seriesState.slice(0, form.series)
+        }
+        const { ok, msg } = await editarEjercicioDeUsuario(ejercicio, ejerId);
+        if (ok) {
             return Swal.fire({
                 icon: ok ? "success" : "error",
                 title: msg
@@ -82,14 +129,14 @@ export const NuevoEjercicio = () => {
 
     return (
         <Modal>
-            <h3>Nuevo ejercicio</h3>
+            <h3 style={{ textAlign: "center", margin: "2rem auto" }}>Nuevo ejercicio</h3>
             <Input>
                 <label>Nombre</label>
-                <input name="nombre" value={form.nombre} onChange={(e) => onChangeValue(e)}/>
+                <input name="nombre" value={form.nombre} onChange={(e) => onChangeValue(e)} />
             </Input>
             <Input>
                 <label>Descripcion (opcional)</label>
-                <input name="descripcion" value={form.descripcion} onChange={(e) => onChangeValue(e)}/>
+                <input name="descripcion" value={form.descripcion} onChange={(e) => onChangeValue(e)} />
             </Input>
             <Label>Dias de actividad</Label>
             <div style={{ display: "grid", gridTemplateColumns: "25% 25% 25% 25%" }}>
@@ -118,7 +165,7 @@ export const NuevoEjercicio = () => {
                             <Label style={{ textAlign: "center" }}>Serie {i + 1}</Label>
                             <DivOpcionIncrementable>
                                 <p>Repeticiones</p>
-                                <input name='reps'/>
+                                <input type={"number"} name='reps' style={{ padding: ".5rem 0", maxWidth: "90px" }} />
                             </DivOpcionIncrementable>
                             <DivOpcionIncrementable>
                                 <p>Tecnica intensidad</p>
@@ -132,11 +179,11 @@ export const NuevoEjercicio = () => {
                     </DivSerie>
                 ))
             }
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center"}}>
-                <Button>Cancelar</Button>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <Button onClick={() => navigate("/tu-rutina")}>Cancelar</Button>
                 <Button activo onClick={validarFormulario}>Guardar</Button>
             </div>
-            
+
         </Modal>
     )
 }

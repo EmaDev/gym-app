@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import {ResultadosSerieInterface} from '../interfaces/Ejercicio';
+import { ResultadosSerieInterface } from '../interfaces/Ejercicio';
 import { styled } from 'styled-components';
 import { EjercicioContext } from '../context/EjercicioActivoContext';
 import { buscarUsuarioEnStorage, formatDate } from '../helpers';
@@ -11,6 +11,7 @@ import Swal from 'sweetalert2';
 import { guardarEjercicioDeUsuario } from '../firebase/queries';
 import { ModalOpcionesDias } from './ModalOpcionesDias';
 import { TablaHistorial } from './TablaHistorial';
+import { TIType, TI_INICIAL } from '../interfaces/TecnicaIntensidad';
 
 const Contenedor = styled.div`
    width: 100%;
@@ -79,6 +80,12 @@ const Table = styled.table`
             text-align: right;
             font-weight: 600;
           } 
+          p{
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            margin:0;
+          }
        }
    }
 `;
@@ -95,6 +102,26 @@ const Button = styled.button<any>`
    font-weight: 600;
    box-shadow: 1px 2px 4px rgba(0,0,0,0.3);
 `;
+const calcularColorTII = (tii: TIType): string => {
+    switch (tii) {
+        case "AMRAP": return "red"
+        case "CLUSTERS": return "blue"
+        case "DROP SET": return "green"
+        case "MYO SET": return "yellow"
+        case "RAMP TO MAX": return "orange"
+        case "REST PAUSE": return "brown"
+        case "SUPERSERIE": return "purple"
+        default: return ""
+    }
+}
+const TII = styled.div<any>`
+  margin-left: .5rem;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: ${({ tii }) => calcularColorTII(tii)};
+`;
+
 interface Input {
     onChange: (e: any) => void;
     name: string;
@@ -188,7 +215,7 @@ export const ModalEjercicio = ({ }: Props) => {
     }
 
     const guardarEjercicio = async () => {
-        const {usuario} = buscarUsuarioEnStorage();
+        const { usuario } = buscarUsuarioEnStorage();
         const { ok, msg } = await guardarEjercicioDeUsuario({
             uid: usuario.uid,
             fecha: new Date(),
@@ -228,6 +255,18 @@ export const ModalEjercicio = ({ }: Props) => {
         cerrarHistorial();
         cerrarModal();
     }
+    const mostrarCodigosColorTII = () => {
+        let html = "";
+        TI_INICIAL.forEach((tii, i) => {
+            if (i > 0) {
+                html += `<p style="color: ${tii.color}; font-size: 1.8rem; font-weight: 700;">${tii.nombre}</p>`;
+            }
+        })
+        return Swal.fire({
+            title: "Codigos color TII",
+            html
+        })
+    }
     if (!modalVisible) {
         return <></>
     }
@@ -237,8 +276,8 @@ export const ModalEjercicio = ({ }: Props) => {
                 <div>
                     <Titulo>{ejercicio.nombre}</Titulo>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <span style={{fontWeight: "600" }}>{formatDate(historicoSeleccionado)}
-                            <IoIosArrowDown onClick={() => setMostrarHistorial(true)} style={{fontSize: "2rem"}}/>
+                        <span style={{ fontWeight: "600" }}>{formatDate(historicoSeleccionado)}
+                            <IoIosArrowDown onClick={() => setMostrarHistorial(true)} style={{ fontSize: "2rem" }} />
                         </span>
                         {completado && <button onClick={cerrarHistorial}>Cerrar histrial</button>}
                     </div>
@@ -248,6 +287,7 @@ export const ModalEjercicio = ({ }: Props) => {
                     </DescripcionSerie>
                     {!completado ?
                         <>
+                            <p onClick={mostrarCodigosColorTII} style={{ margin: ".5rem", fontSize: "1.2rem", fontWeight: "600", textDecoration: "underline", color: "pink" }}>Ver colores TII</p>
                             <Table>
                                 <thead>
                                     <tr>
@@ -261,7 +301,7 @@ export const ModalEjercicio = ({ }: Props) => {
                                 <tbody>
                                     {ejercicio.series.map(s => (
                                         <tr key={s.orden}>
-                                            <th>{s.repeticiones}</th>
+                                            <th><p>{s.repeticiones}{s.tecnica != "NINGUNA" && <TII tii={s.tecnica} />}</p></th>
                                             <th><input name='peso' onChange={(e) => onChangeRepetecion(s.orden, e)} /></th>
                                             <th><input name='rpe' onChange={(e) => onChangeRepetecion(s.orden, e)} /></th>
                                             <th><input name='rir' onChange={(e) => onChangeRepetecion(s.orden, e)} /></th>
@@ -280,7 +320,7 @@ export const ModalEjercicio = ({ }: Props) => {
                             <textarea style={{ width: "95%", margin: "auto 1rem", minHeight: "100px" }} value={observacion} onChange={({ target }) => setObservacion(target.value)} />
                         </>
                         :
-                        <TablaHistorial historico={historicoSeleccionado} ejerId={ejercicio.id || ""}/>
+                        <TablaHistorial historico={historicoSeleccionado} ejerId={ejercicio.id || ""} />
                     }
                     <br /><br />
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>

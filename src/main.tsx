@@ -21,7 +21,7 @@ const router = createHashRouter([
     element: <TuRutina/>,
   },
   {
-    path: "/crear-ejercicio",
+    path: "/crear-ejercicio/:idEjer",
     element: <CrearEjercicio/>,
   },
   {

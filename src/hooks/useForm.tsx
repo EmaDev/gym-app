@@ -26,5 +26,11 @@ export const useForm = (initialState: any) => {
             [target.name]: target.value
         })
     }
-    return { form, onChangeValue, onChangeFormNumber }
+
+    const llenarForm = (nuevoForm:any) => {
+        setForm({
+            ...nuevoForm
+        })
+    }
+    return { form, onChangeValue, onChangeFormNumber, llenarForm }
 }
